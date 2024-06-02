@@ -22,5 +22,13 @@
 
 """Main module of followmail program."""
 
-if __name__ == "__main__":
+
+# region functions
+def main():
+    """Main function"""
     pass
+
+# endregion
+
+if __name__ == "__main__":
+    main()

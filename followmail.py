@@ -21,19 +21,34 @@
 #     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 """Main module of followmail program."""
+
 # region imports
 import argparse
 
 
 # endregion
 
+# region globals
+__version__ = "0.0.1"
+
+# endregion
+
+
 # region functions
 def get_args():
     """Get command line arguments"""
-    
+
     parser = argparse.ArgumentParser(
         description="postfix log parser to follow a mail addresses",
         formatter_class=argparse.ArgumentDefaultsHelpFormatter,
+    )
+
+    parser.add_argument(
+        "--version",
+        "-V",
+        help="print version",
+        action="version",
+        version="%(prog)s " + __version__,
     )
 
     args = parser.parse_args()

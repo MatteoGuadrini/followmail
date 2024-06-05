@@ -51,6 +51,13 @@ def get_args():
         version="%(prog)s " + __version__,
     )
 
+    parser.add_argument(
+        "--verbose",
+        "-v",
+        help="print with verbosity",
+        action="store_true",
+    )
+
     args = parser.parse_args()
 
     return args
@@ -60,6 +67,7 @@ def main():
     """Main function"""
 
     args = get_args()
+    verbose = args.verbose
 
 
 # endregion

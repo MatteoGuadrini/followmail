@@ -63,14 +63,27 @@ def get_args():
     return args
 
 
+def print_verbose(verbosity, *messages):
+    """Print verbose messages
+
+    :param verbosity: boolean to activate verbose print
+    """
+    if verbosity:
+        print("debug:", *messages)
+
+
+# region scripts
 def main():
     """Main function"""
 
     args = get_args()
     verbose = args.verbose
+    print_verbose(verbose, "start followmail")
 
 
 # endregion
 
 if __name__ == "__main__":
     main()
+
+# endregion

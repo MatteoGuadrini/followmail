@@ -58,12 +58,19 @@ def get_args():
         action="store_true",
     )
 
+    parser.add_argument(
+        "--to",
+        "-t",
+        help="email address into to field",
+        action="store",
+    )
+
     args = parser.parse_args()
 
     return args
 
 
-def print_verbose(verbosity, *messages):
+def print_verbose(verbosity: bool, *messages: str):
     """Print verbose messages
 
     :param verbosity: boolean to activate verbose print
@@ -76,9 +83,13 @@ def print_verbose(verbosity, *messages):
 def main():
     """Main function"""
 
+    # Define global for a script
     args = get_args()
     verbose = args.verbose
     print_verbose(verbose, "start followmail")
+    # Define filters
+    to = args.to
+    print_verbose(verbose, f"add {to} into filters")
 
 
 # endregion

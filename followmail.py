@@ -25,11 +25,11 @@
 # region imports
 import argparse
 
-
 # endregion
 
 # region globals
 __version__ = "0.0.1"
+
 
 # endregion
 
@@ -64,6 +64,13 @@ def get_args():
         help="email address into to field",
         action="store",
     )
+    parser.add_argument(
+        "--from",
+        "-f",
+        help="email address into from field",
+        dest="from_",
+        action="store",
+    )
 
     args = parser.parse_args()
 
@@ -90,6 +97,8 @@ def main():
     # Define filters
     to = args.to
     print_verbose(verbose, f"add {to} into filters")
+    from_ = args.from_
+    print_verbose(verbose, f"add {from_} into filters")
 
 
 # endregion

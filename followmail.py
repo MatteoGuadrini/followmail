@@ -42,7 +42,6 @@ def get_args():
         description="postfix log parser to follow a mail addresses",
         formatter_class=argparse.ArgumentDefaultsHelpFormatter,
     )
-
     parser.add_argument(
         "--version",
         "-V",
@@ -50,18 +49,18 @@ def get_args():
         action="version",
         version="%(prog)s " + __version__,
     )
-
     parser.add_argument(
         "--verbose",
         "-v",
         help="print with verbosity",
         action="store_true",
     )
-
     parser.add_argument(
         "--to",
         "-t",
         help="email address into to field",
+        metavar="mail_address",
+        type=str,
         action="store",
     )
     parser.add_argument(
@@ -69,7 +68,17 @@ def get_args():
         "-f",
         help="email address into from field",
         dest="from_",
+        metavar="mail_address",
+        type=str,
         action="store",
+    )
+    parser.add_argument(
+        "-l",
+        "--maillog",
+        help="input maillog file",
+        metavar="path",
+        type=str,
+        default="/var/log/maillog",
     )
 
     args = parser.parse_args()
@@ -99,6 +108,8 @@ def main():
     print_verbose(verbose, f"add {to} into filters")
     from_ = args.from_
     print_verbose(verbose, f"add {from_} into filters")
+    maillog = args.maillog
+    print_verbose(verbose, f"add {maillog} into filters")
 
 
 # endregion

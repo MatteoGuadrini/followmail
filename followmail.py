@@ -80,6 +80,13 @@ def get_args():
         type=str,
         default="/var/log/maillog",
     )
+    parser.add_argument(
+        "-q",
+        "--queue",
+        metavar="queue_name",
+        help="name of postfix queue",
+        default="postfix"
+    )
 
     args = parser.parse_args()
 
@@ -110,6 +117,8 @@ def main():
     print_verbose(verbose, f"add {from_} into filters")
     maillog = args.maillog
     print_verbose(verbose, f"add {maillog} into filters")
+    queue = args.queue
+    print_verbose(verbose, f"add {queue} into filters")
 
 
 # endregion

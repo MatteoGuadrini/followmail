@@ -24,6 +24,7 @@
 
 # region imports
 import argparse
+import os
 
 # endregion
 
@@ -89,6 +90,10 @@ def get_args():
     )
 
     args = parser.parse_args()
+
+    # Check maillog file exists
+    if not os.path.isfile(args.maillog):
+        parser.error(f'maillog file "{args.maillog}" does not exists')
 
     return args
 

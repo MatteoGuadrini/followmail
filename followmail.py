@@ -95,6 +95,10 @@ def get_args():
     if not os.path.isfile(args.maillog):
         parser.error(f'maillog file "{args.maillog}" does not exists')
 
+    # Check flags
+    if not args.to and not args.from_:
+        parser.error('unspecified filter "--to" or "--from"')
+
     return args
 
 

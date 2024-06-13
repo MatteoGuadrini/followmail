@@ -99,6 +99,10 @@ def get_args():
     if not args.to and not args.from_:
         parser.error('unspecified filter "--to" or "--from"')
 
+    # Validate email address
+    if '@' not in args.to or '@' not in args.from_:
+        parser.error('specified a valid email address')
+
     return args
 
 

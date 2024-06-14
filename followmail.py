@@ -25,6 +25,7 @@
 # region imports
 import argparse
 import os
+import re
 
 # endregion
 
@@ -113,6 +114,17 @@ def print_verbose(verbosity: bool, *messages: str):
     """
     if verbosity:
         print("debug:", *messages)
+
+
+def smtpid(message: str):
+    """Extract smtp id from message of log
+    
+    :param message: message line of the log
+    :return: str
+    """
+    sid = re.search("(:\s\w{10,15}:)", message)
+    if sid:
+        return sid.group().replace(':', '').strip()
 
 
 # region scripts

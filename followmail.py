@@ -24,6 +24,7 @@
 
 # region imports
 import argparse
+import gzip
 import os
 import re
 
@@ -144,6 +145,13 @@ def main():
     print_verbose(verbose, f"add {maillog} into filters")
     queue = args.queue
     print_verbose(verbose, f"add {queue} into filters")
+    # Define function to open log
+    open_log = gzip.open if maillog.endswith("gz") else open
+    
+    # Process log file
+    for line in open_log(maillog, 'rt'):
+        # Split line into single variable
+        pass
 
 
 # endregion

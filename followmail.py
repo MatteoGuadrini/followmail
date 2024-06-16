@@ -28,10 +28,13 @@ import gzip
 import os
 import re
 
+from collections import namedtuple
+
 # endregion
 
 # region globals
 __version__ = "0.0.1"
+LogLine = namedtuple("LogLine", ["date", "time", "server", "queue", "smtpid", "message"])
 
 
 # endregion
@@ -147,7 +150,7 @@ def main():
     print_verbose(verbose, f"add {queue} into filters")
     # Define function to open log
     open_log = gzip.open if maillog.endswith("gz") else open
-    
+
     # Process log file
     for line in open_log(maillog, 'rt'):
         # Split line into single variable

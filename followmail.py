@@ -105,7 +105,10 @@ def get_args():
         parser.error('unspecified filter "--to" or "--from"')
 
     # Validate email address
-    if '@' not in args.to or '@' not in args.from_:
+    if args.to and '@' not in args.to:
+        parser.error('specified a valid email address')
+        
+    if args.from_ and '@' not in args.from_:
         parser.error('specified a valid email address')
 
     return args
@@ -126,7 +129,7 @@ def smtpid(message: str):
     :param message: message line of the log
     :return: str
     """
-    sid = re.search("(:\s\w{10,15}:)", message)
+    sid = re.search(r"(:\s\w{10,15}:)", message)
     if sid:
         return sid.group().replace(':', '').strip()
 

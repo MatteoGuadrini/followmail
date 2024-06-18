@@ -107,7 +107,7 @@ def get_args():
     # Validate email address
     if args.to and '@' not in args.to:
         parser.error('specified a valid email address')
-        
+
     if args.from_ and '@' not in args.from_:
         parser.error('specified a valid email address')
 
@@ -121,17 +121,6 @@ def print_verbose(verbosity: bool, *messages: str):
     """
     if verbosity:
         print("debug:", *messages)
-
-
-def smtpid(message: str):
-    """Extract smtp id from message of log
-    
-    :param message: message line of the log
-    :return: str
-    """
-    sid = re.search(r"(:\s\w{10,15}:)", message)
-    if sid:
-        return sid.group().replace(':', '').strip()
 
 
 # region scripts
@@ -157,7 +146,14 @@ def main():
     # Process log file
     for line in open_log(maillog, 'rt'):
         # Split line into single variable
-        pass
+        pattern = re.compile(r"(^[A-Za-z]{3}\s\d{1,2})\s(\d{2}:\d{2}:\d{2})\s(\w+)\s(.*/.*\[\d+]):\s(\w{10,15}):\s(.*)")
+        line = re.findall(pattern, line)
+
+        # Skip line if not in pattern
+        if not line:
+            continue
+
+        line = [part for part in line[0]]
 
 
 # endregion

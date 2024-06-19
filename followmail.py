@@ -155,6 +155,16 @@ def main():
 
         line = [part for part in line[0]]
 
+        # Make a LogLine object
+        logline = LogLine(date=line[0],
+                          time=line[1],
+                          server=line[2],
+                          queue=line[3],
+                          smtpid=line[4],
+                          message=line[5]
+                          )
+        print_verbose(verbose, f"found a log line {logline}")
+
 
 # endregion
 

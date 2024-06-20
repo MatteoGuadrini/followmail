@@ -133,9 +133,11 @@ def main():
     print_verbose(verbose, "start followmail")
     # Define filters
     to = args.to
-    print_verbose(verbose, f"add {to} into filters")
+    if to:
+        print_verbose(verbose, f"add {to} into filters")
     from_ = args.from_
-    print_verbose(verbose, f"add {from_} into filters")
+    if from_:
+        print_verbose(verbose, f"add {from_} into filters")
     maillog = args.maillog
     print_verbose(verbose, f"add {maillog} into filters")
     queue = args.queue

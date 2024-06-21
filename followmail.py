@@ -29,12 +29,15 @@ import os
 import re
 
 from collections import namedtuple
+from tablib import Dataset
 
 # endregion
 
 # region globals
 __version__ = "0.0.1"
-LogLine = namedtuple("LogLine", ["date", "time", "server", "queue", "smtpid", "message"])
+LogLine = namedtuple(
+    "LogLine", ["date", "time", "server", "queue", "smtpid", "message"]
+)
 
 
 # endregion
@@ -91,7 +94,7 @@ def get_args():
         "--queue",
         metavar="queue_name",
         help="name of postfix queue",
-        default="postfix"
+        default="postfix",
     )
 
     args = parser.parse_args()
@@ -105,11 +108,11 @@ def get_args():
         parser.error('unspecified filter "--to" or "--from"')
 
     # Validate email address
-    if args.to and '@' not in args.to:
-        parser.error('specified a valid email address')
+    if args.to and "@" not in args.to:
+        parser.error("specified a valid email address")
 
-    if args.from_ and '@' not in args.from_:
-        parser.error('specified a valid email address')
+    if args.from_ and "@" not in args.from_:
+        parser.error("specified a valid email address")
 
     return args
 
@@ -130,6 +133,7 @@ def main():
     # Define global for a script
     args = get_args()
     verbose = args.verbose
+    data = Dataset(headers=("date", "time", "server", "queue", "smtpid", "message"))
     print_verbose(verbose, "start followmail")
     # Define filters
     to = args.to
@@ -146,9 +150,11 @@ def main():
     open_log = gzip.open if maillog.endswith("gz") else open
 
     # Process log file
-    for line in open_log(maillog, 'rt'):
+    for line in open_log(maillog, "rt"):
         # Split line into single variable
-        pattern = re.compile(r"(^[A-Za-z]{3}\s\d{1,2})\s(\d{2}:\d{2}:\d{2})\s(\w+)\s(.*/.*\[\d+]):\s(\w{10,15}):\s(.*)")
+        pattern = re.compile(
+            r"(^[A-Za-z]{3}\s\d{1,2})\s(\d{2}:\d{2}:\d{2})\s(\w+)\s(.*/.*\[\d+]):\s(\w{10,15}):\s(.*)"
+        )
         line = re.findall(pattern, line)
 
         # Skip line if not in pattern
@@ -158,14 +164,18 @@ def main():
         line = [part for part in line[0]]
 
         # Make a LogLine object
-        logline = LogLine(date=line[0],
-                          time=line[1],
-                          server=line[2],
-                          queue=line[3],
-                          smtpid=line[4],
-                          message=line[5]
-                          )
+        logline = LogLine(
+            date=line[0],
+            time=line[1],
+            server=line[2],
+            queue=line[3],
+            smtpid=line[4],
+            message=line[5],
+        )
         print_verbose(verbose, f"found a log line {logline}")
+
+        # Add logline into Dataset
+        data.append(logline)
 
 
 # endregion

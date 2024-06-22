@@ -173,6 +173,10 @@ def main():
             message=line[5],
         )
         print_verbose(verbose, f"found a log line {logline}")
+        
+        # Filter queue
+        if queue not in logline.queue:
+            continue
 
         # Add logline into Dataset
         data.append(logline)

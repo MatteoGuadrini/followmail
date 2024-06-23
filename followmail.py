@@ -177,6 +177,10 @@ def main():
         # Filter queue
         if queue not in logline.queue:
             continue
+            
+        # Filter to and from
+        if to not in logline.message and str(from_) not in logline.message:
+            continue
 
         # Add logline into Dataset
         data.append(logline)

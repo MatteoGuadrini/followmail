@@ -184,6 +184,9 @@ def main():
 
         # Add logline into Dataset
         data.append(logline)
+    
+    # Sort by smtpid
+    data.sort("smtpid")
 
 
 # endregion

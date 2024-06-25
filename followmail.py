@@ -29,6 +29,7 @@ import os
 import re
 
 from collections import namedtuple
+
 from tablib import Dataset
 
 # endregion
@@ -126,6 +127,52 @@ def print_verbose(verbosity: bool, *messages: str):
         print("debug:", *messages)
 
 
+def search_by_smtpid(smtpid: str, log: str, pattern: re.Pattern):
+    """Search log lines by smtp id
+    
+    :param smtpid: string of smtp is
+    :param log: opened log file
+    :param pattern: regexp pattern
+    :return: List[tuple]
+    """
+    rows = list()
+
+    # Define function to open log
+    open_log = gzip.open if log.endswith("gz") else open
+
+    # Process log file
+    with open_log(log, "rt") as maillog_file:
+        for line in maillog_file:
+            # Split line into single variable
+            line = re.findall(pattern, line)
+
+            # Skip line if not in pattern
+            if not line:
+                continue
+
+            line = [part for part in line[0]]
+    
+            # Make a LogLine object
+            logline = LogLine(
+                date=line[0],
+                time=line[1],
+                server=line[2],
+                queue=line[3],
+                smtpid=line[4],
+                message=line[5],
+            )
+
+            # Match smtp id
+            if smtpid == logline.smtpid:
+                rows.append(logline)
+
+                # End of flow
+                if "status" in logline.message:
+                    break
+
+    return rows
+
+
 # region scripts
 def main():
     """Main function"""
@@ -133,6 +180,7 @@ def main():
     # Define global for a script
     args = get_args()
     verbose = args.verbose
+    # Empty Dataset
     data = Dataset(headers=("date", "time", "server", "queue", "smtpid", "message"))
     print_verbose(verbose, "start followmail")
     # Define filters
@@ -146,47 +194,61 @@ def main():
     print_verbose(verbose, f"add {maillog} into filters")
     queue = args.queue
     print_verbose(verbose, f"add {queue} into filters")
+
+    # Define pattern regexp
+    pattern = re.compile(
+        r"(^[A-Za-z]{3}\s\d{1,2})\s(\d{2}:\d{2}:\d{2})\s(\w+)\s(.*/.*\[\d+]):\s(\w{10,15}):\s(.*)"
+    )
     # Define function to open log
     open_log = gzip.open if maillog.endswith("gz") else open
 
     # Process log file
-    for line in open_log(maillog, "rt"):
-        # Split line into single variable
-        pattern = re.compile(
-            r"(^[A-Za-z]{3}\s\d{1,2})\s(\d{2}:\d{2}:\d{2})\s(\w+)\s(.*/.*\[\d+]):\s(\w{10,15}):\s(.*)"
-        )
-        line = re.findall(pattern, line)
+    with open_log(maillog, "rt") as maillog_file:
+        for line in maillog_file:
 
-        # Skip line if not in pattern
-        if not line:
-            continue
+            # Split line into single variable
+            line = re.findall(pattern, line)
 
-        line = [part for part in line[0]]
+            # Skip line if not in pattern
+            if not line:
+                continue
 
-        # Make a LogLine object
-        logline = LogLine(
-            date=line[0],
-            time=line[1],
-            server=line[2],
-            queue=line[3],
-            smtpid=line[4],
-            message=line[5],
-        )
-        print_verbose(verbose, f"found a log line {logline}")
-        
-        # Filter queue
-        if queue not in logline.queue:
-            continue
-            
-        # Filter to and from
-        if to not in logline.message and str(from_) not in logline.message:
-            continue
+            line = [part for part in line[0]]
 
-        # Add logline into Dataset
-        data.append(logline)
-    
+            # Make a LogLine object
+            logline = LogLine(
+                date=line[0],
+                time=line[1],
+                server=line[2],
+                queue=line[3],
+                smtpid=line[4],
+                message=line[5],
+            )
+
+            # Filter queue
+            if queue not in logline.queue:
+                continue
+
+            # Filter to and from
+            if str(to) not in logline.message and str(from_) not in logline.message:
+                continue
+
+            print_verbose(verbose, f"found a log line {logline}")
+
+            # Find lines through smtp id
+            lines = search_by_smtpid(logline.smtpid, maillog, pattern)
+
+            # Add logline into Dataset
+            data.extend(lines)
+
+            # Add separator
+            data.append_separator()
+
     # Sort by smtpid
     data.sort("smtpid")
+
+    # Print data
+    print(data)
 
 
 # endregion

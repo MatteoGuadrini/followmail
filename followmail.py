@@ -127,6 +127,18 @@ def print_verbose(verbosity: bool, *messages: str):
         print("debug:", *messages)
 
 
+def open_log(log: str):
+    """Open maillog file
+    
+    :param log: maillog file path
+    :return: opened log 
+    """
+    # Define function to open log
+    open_method = gzip.open if log.endswith("gz") else open
+
+    return open_method(log, "rt")
+
+
 def search_by_smtpid(smtpid: str, log: str, pattern: re.Pattern):
     """Search log lines by smtp id
     
@@ -137,11 +149,8 @@ def search_by_smtpid(smtpid: str, log: str, pattern: re.Pattern):
     """
     rows = list()
 
-    # Define function to open log
-    open_log = gzip.open if log.endswith("gz") else open
-
     # Process log file
-    with open_log(log, "rt") as maillog_file:
+    with open_log(log) as maillog_file:
         for line in maillog_file:
             # Split line into single variable
             line = re.findall(pattern, line)
@@ -151,7 +160,7 @@ def search_by_smtpid(smtpid: str, log: str, pattern: re.Pattern):
                 continue
 
             line = [part for part in line[0]]
-    
+
             # Make a LogLine object
             logline = LogLine(
                 date=line[0],
@@ -199,11 +208,9 @@ def main():
     pattern = re.compile(
         r"(^[A-Za-z]{3}\s\d{1,2})\s(\d{2}:\d{2}:\d{2})\s(\w+)\s(.*/.*\[\d+]):\s(\w{10,15}):\s(.*)"
     )
-    # Define function to open log
-    open_log = gzip.open if maillog.endswith("gz") else open
 
     # Process log file
-    with open_log(maillog, "rt") as maillog_file:
+    with open_log(maillog) as maillog_file:
         for line in maillog_file:
 
             # Split line into single variable

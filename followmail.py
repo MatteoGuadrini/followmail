@@ -139,6 +139,33 @@ def open_log(log: str):
     return open_method(log, "rt")
 
 
+def make_logline(line: str, pattern: re.Pattern):
+    """Make LogLine object from string
+    
+    :param line: maillog line
+    :param pattern: regexp pattern object
+    :return: LogLine
+    """
+    # Split line into single variable
+    line = re.findall(pattern, line)
+
+    # Skip line if not in pattern
+    if line:
+        line = [part for part in line[0]]
+
+        # Make a LogLine object
+        logline = LogLine(
+            date=line[0],
+            time=line[1],
+            server=line[2],
+            queue=line[3],
+            smtpid=line[4],
+            message=line[5],
+        )
+
+        return logline
+
+
 def search_by_smtpid(smtpid: str, log: str, pattern: re.Pattern):
     """Search log lines by smtp id
     
@@ -152,32 +179,16 @@ def search_by_smtpid(smtpid: str, log: str, pattern: re.Pattern):
     # Process log file
     with open_log(log) as maillog_file:
         for line in maillog_file:
-            # Split line into single variable
-            line = re.findall(pattern, line)
+            logline = make_logline(line, pattern)
 
-            # Skip line if not in pattern
-            if not line:
-                continue
+            if logline:
+                # Match smtp id
+                if smtpid == logline.smtpid:
+                    rows.append(logline)
 
-            line = [part for part in line[0]]
-
-            # Make a LogLine object
-            logline = LogLine(
-                date=line[0],
-                time=line[1],
-                server=line[2],
-                queue=line[3],
-                smtpid=line[4],
-                message=line[5],
-            )
-
-            # Match smtp id
-            if smtpid == logline.smtpid:
-                rows.append(logline)
-
-                # End of flow
-                if "status" in logline.message:
-                    break
+                    # End of flow
+                    if "removed" in logline.message:
+                        break
 
     return rows
 
@@ -212,44 +223,27 @@ def main():
     # Process log file
     with open_log(maillog) as maillog_file:
         for line in maillog_file:
+            logline = make_logline(line, pattern)
 
-            # Split line into single variable
-            line = re.findall(pattern, line)
+            if logline:
+                # Filter queue
+                if queue not in logline.queue:
+                    continue
 
-            # Skip line if not in pattern
-            if not line:
-                continue
+                # Filter to and from
+                if str(to) not in logline.message and str(from_) not in logline.message:
+                    continue
 
-            line = [part for part in line[0]]
+                print_verbose(verbose, f"found a log line {logline}")
 
-            # Make a LogLine object
-            logline = LogLine(
-                date=line[0],
-                time=line[1],
-                server=line[2],
-                queue=line[3],
-                smtpid=line[4],
-                message=line[5],
-            )
+                # Find lines through smtp id
+                lines = search_by_smtpid(logline.smtpid, maillog, pattern)
 
-            # Filter queue
-            if queue not in logline.queue:
-                continue
+                # Add logline into Dataset
+                data.extend(lines)
 
-            # Filter to and from
-            if str(to) not in logline.message and str(from_) not in logline.message:
-                continue
-
-            print_verbose(verbose, f"found a log line {logline}")
-
-            # Find lines through smtp id
-            lines = search_by_smtpid(logline.smtpid, maillog, pattern)
-
-            # Add logline into Dataset
-            data.extend(lines)
-
-            # Add separator
-            data.append_separator()
+                # Add separator
+                data.append_separator()
 
     # Sort by smtpid
     data.sort("smtpid")

@@ -223,17 +223,18 @@ def main():
     # Process log file
     with open_log(maillog) as maillog_file:
         for line in maillog_file:
-            
+
             logline = make_logline(line, pattern)
 
             if logline:
-                
+
                 # Filter queue
                 if queue not in logline.queue:
                     continue
 
                 # Filter to and from
-                if f"to=<{to}>" not in logline.message and f"from=<{from_}>" not in logline.message:
+                if (f"to=<{to}>" not in logline.message and
+                        f"from=<{from_}>" not in logline.message):
                     continue
 
                 print_verbose(verbose, f"found a log line {logline}")
@@ -243,9 +244,6 @@ def main():
 
                 # Add logline into Dataset
                 data.extend(lines)
-
-                # Add separator
-                data.append_separator()
 
     # Sort by smtpid
     data.sort("smtpid")

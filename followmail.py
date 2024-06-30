@@ -97,8 +97,18 @@ def get_args():
         help="name of postfix queue",
         default="postfix",
     )
+    parser.add_argument(
+        "-l",
+        "--max-lines",
+        type=int,
+        help="max lines to print",
+    )
 
     args = parser.parse_args()
+
+    # Check if max lines is less than one
+    if args.max_lines and args.max_lines < 1:
+        parser.error("max lines is must greater than zero")
 
     # Check maillog file exists
     if not os.path.isfile(args.maillog):
@@ -249,7 +259,10 @@ def main():
     data.sort("smtpid")
 
     # Print data
-    print(data)
+    if args.max_lines:
+        print(data[args.max_lines])
+    else:
+        print(data)
 
 
 # endregion

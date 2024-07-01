@@ -103,6 +103,12 @@ def get_args():
         type=int,
         help="max lines to print",
     )
+    parser.add_argument(
+        "--sortby-date",
+        "-D",
+        help="sort lines by date",
+        action="store_true",
+    )
 
     args = parser.parse_args()
 
@@ -256,11 +262,14 @@ def main():
                 data.extend(lines)
 
     # Sort by smtpid
-    data.sort("smtpid")
+    if args.sortby_date:
+        data.sort("date")
+    else:
+        data.sort("smtpid")
 
     # Print data
     if args.max_lines:
-        print(data[args.max_lines])
+        print(data[:args.max_lines])
     else:
         print(data)
 

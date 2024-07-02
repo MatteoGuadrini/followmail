@@ -98,7 +98,7 @@ def get_args():
         default="postfix",
     )
     parser.add_argument(
-        "-l",
+        "-m",
         "--max-lines",
         type=int,
         help="max lines to print",
@@ -113,7 +113,7 @@ def get_args():
     args = parser.parse_args()
 
     # Check if max lines is less than one
-    if args.max_lines and args.max_lines < 1:
+    if args.max_lines and args.max_lines <= 0:
         parser.error("max lines is must greater than zero")
 
     # Check maillog file exists
@@ -222,10 +222,10 @@ def main():
     # Define filters
     to = args.to
     if to:
-        print_verbose(verbose, f"add {to} into filters")
+        print_verbose(verbose, f"add {to} into 'to' filters")
     from_ = args.from_
     if from_:
-        print_verbose(verbose, f"add {from_} into filters")
+        print_verbose(verbose, f"add {from_} into 'from' filters")
     maillog = args.maillog
     print_verbose(verbose, f"add {maillog} into filters")
     queue = args.queue
@@ -233,7 +233,7 @@ def main():
 
     # Define pattern regexp
     pattern = re.compile(
-        r"(^[A-Za-z]{3}\s\d{1,2})\s(\d{2}:\d{2}:\d{2})\s(\w+)\s(.*/.*\[\d+]):\s(\w{10,15}):\s(.*)"
+        r"(^[A-Za-z]{3}\s\s?\d{1,2})\s(\d{2}:\d{2}:\d{2})\s(\w+)\s(.*/.*\[\d+]):\s(\w{10,15}):\s(.*)"
     )
 
     # Process log file
@@ -267,11 +267,18 @@ def main():
     else:
         data.sort("smtpid")
 
-    # Print data
     if args.max_lines:
-        print(data[:args.max_lines])
-    else:
+        limited_data = data[:args.max_lines]
+        # Create a new empty Dataset
+        data = Dataset(headers=("date", "time", "server", "queue", "smtpid", "message"))
+        # Extend dataset with limited data
+        data.extend(limited_data)
+
+    # Print data
+    if data:
         print(data)
+    else:
+        print("no data found")
 
 
 # endregion

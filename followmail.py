@@ -109,11 +109,17 @@ def get_args():
         help="sort lines by date",
         action="store_true",
     )
+    parser.add_argument(
+        "--csv",
+        "-c",
+        help="print in csv format",
+        action="store_true",
+    )
 
     args = parser.parse_args()
 
     # Check if max lines is less than one
-    if args.max_lines and args.max_lines <= 0:
+    if args.max_lines is not None and args.max_lines <= 0:
         parser.error("max lines is must greater than zero")
 
     # Check maillog file exists
@@ -276,7 +282,10 @@ def main():
 
     # Print data
     if data:
-        print(data)
+        if args.csv:
+            print(data.export("csv"))
+        else:
+            print(data)
     else:
         print("no data found")
 

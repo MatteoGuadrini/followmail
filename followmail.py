@@ -115,6 +115,12 @@ def get_args():
         help="print in csv format",
         action="store_true",
     )
+    parser.add_argument(
+        "--json",
+        "-j",
+        help="print in json format",
+        action="store_true",
+    )
 
     args = parser.parse_args()
 
@@ -284,6 +290,8 @@ def main():
     if data:
         if args.csv:
             print(data.export("csv"))
+        elif args.json:
+            print(data.export("json"))
         else:
             print(data)
     else:

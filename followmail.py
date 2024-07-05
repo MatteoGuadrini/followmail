@@ -221,6 +221,27 @@ def search_by_smtpid(smtpid: str, log: str, pattern: re.Pattern):
     return rows
 
 
+def print_data(data: Dataset, csv: bool = False, json: bool = False):
+    """Print Dataset to stdout
+
+    :param data: Dataset object
+    :param csv: print to csv format, defaults to False
+    :param json: print to json format, defaults to False
+    """
+    # Check if data is not empty...
+    if not data:
+        print("no data found")
+        return
+    
+    # ...everything else, print!
+    if csv:
+        print(data.export("csv"))
+    elif json:
+        print(data.export("json"))
+    else:
+        print(data)
+
+
 # region scripts
 def main():
     """Main function"""
@@ -287,15 +308,7 @@ def main():
         data.extend(limited_data)
 
     # Print data
-    if data:
-        if args.csv:
-            print(data.export("csv"))
-        elif args.json:
-            print(data.export("json"))
-        else:
-            print(data)
-    else:
-        print("no data found")
+    print_data(data, csv=args.csv, json=args.json)
 
 
 # endregion

@@ -1,7 +1,19 @@
 # `followmail`
 _followmail_ is a command line utility that parse a postfix log file (also gzipped) and follow pathway of specific mail, in **to** or **from** fields.
 
-> This project is WIP
+
+## Installation
+
+To install _followmail_, follow this:
+
+```console
+# With pypi
+pip install followmail
+
+# With git
+git clone https://github.com/MatteoGuadrini/followmail.git && cd followmail
+pip install .
+```
 
 ## Open source
 _followmail_ is an open source project. Any contribute, It's welcome.

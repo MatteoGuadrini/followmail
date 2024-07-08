@@ -1,6 +1,7 @@
 # `followmail`
-_followmail_ is a command line utility that parse a postfix log file (also gzipped) and follow pathway of specific mail, in **to** or **from** fields.
 
+_followmail_ is a command line utility that parse a postfix log file (also gzipped) and follow pathway of specific mail,
+in **to** or **from** fields.
 
 ## Installation
 
@@ -15,7 +16,24 @@ git clone https://github.com/MatteoGuadrini/followmail.git && cd followmail
 pip install .
 ```
 
+## Command arguments
+
+`followmail` have many command line arguments. They are explained in this table:
+
+| short | long          | description                       | args          |
+|-------|---------------|-----------------------------------|---------------|
+| -v    | --verbose     | Print with verbosity              |               |
+| -t    | --to          | Email address into **to** field   | Mail address  |
+| -f    | --from        | Email address into **from** field | Mail address  |
+| -l    | --maillog     | Input maillog file                | File path     |
+| -q    | --queue       | Name of postfix queue             | Name of queue |
+| -m    | --max-lines   | Max lines to print                | Number        |
+| -D    | --sortby-date | Sort lines by date                |               |
+| -c    | --csv         | Print in csv format               |               |
+| -j    | --json        | Print in json format              |               |
+
 ## Open source
+
 _followmail_ is an open source project. Any contribute, It's welcome.
 
 **A great thanks**.
@@ -28,21 +46,21 @@ For me
 
 For [Telethon](http://www.telethon.it/)
 
-The Telethon Foundation is a non-profit organization recognized by the Ministry of University and Scientific and Technological Research.
+The Telethon Foundation is a non-profit organization recognized by the Ministry of University and Scientific and
+Technological Research.
 They were born in 1990 to respond to the appeal of patients suffering from rare diseases.
 Come today, we are organized to dare to listen to them and answers, every day of the year.
 
 [Adopt the future](https://www.ioadottoilfuturo.it/)
 
+## Treeware
 
-## Treeware  
-
-This package is [Treeware](https://treeware.earth). If you use it in production, 
-then we ask that you [**buy the world a tree**](https://plant.treeware.earth/matteoguadrini/mkpl) to thank us for our work. 
+This package is [Treeware](https://treeware.earth). If you use it in production,
+then we ask that you [**buy the world a tree**](https://plant.treeware.earth/matteoguadrini/mkpl) to thank us for our
+work.
 By contributing to the Treeware forest you’ll be creating employment for local families and restoring wildlife habitats.
 
 [![Treeware](https://img.shields.io/badge/dynamic/json?color=brightgreen&label=Treeware&query=%24.total&url=https%3A%2F%2Fpublic.offset.earth%2Fusers%2Ftreeware%2Ftrees)](https://treeware.earth)
-
 
 ## Acknowledgments
 
@@ -52,7 +70,7 @@ Thanks to Kenneth Reitz and Tanya Schlusser for writing the _The Hitchhiker’s 
 
 Thanks to Dane Hillard for writing the _Practices of the Python Pro_ books.
 
-Special thanks go to my wife, who understood the hours of absence for this development. 
+Special thanks go to my wife, who understood the hours of absence for this development.
 Thanks to my children, for the daily inspiration they give me and to make me realize, that life must be simple.
 
 Thanks, Python!

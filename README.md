@@ -32,6 +32,69 @@ pip install .
 | -c    | --csv         | Print in csv format               |               |
 | -j    | --json        | Print in json format              |               |
 
+## Examples
+
+1. Search into **to** field the email _other@example.com_:
+
+    ```bash
+    followmail -t other@example.com
+    ```
+
+2. Search into **from** field the email _other@example.com_:
+
+    ```bash
+    followmail -f other@example.com
+    ```
+
+3. Search both **from** and **to** fields:
+
+    ```bash
+    followmail -f other@example.com -t other2@example.com
+    ```
+   
+4. Filter per queue
+
+   ```bash
+    followmail -f other@example.com -t other2@example.com -q "postfix/in"
+    ```
+   
+5. Select archived log
+
+   ```bash
+    followmail -f other@example.com -t other2@example.com -l "/var/log/maillog-20240709.tar.gz"
+    ```
+   
+6. Select archived log
+
+   ```bash
+    followmail -f other@example.com -t other2@example.com -m 20
+    ```
+
+7. Sort results by date
+
+   ```bash
+    followmail -f other@example.com -t other2@example.com -D
+    ```
+
+8. Print result in CSV format
+
+   ```bash
+    followmail -f other@example.com -t other2@example.com -c
+    ```
+
+9. Print result in JSON format
+
+   ```bash
+    followmail -f other@example.com -t other2@example.com -j
+    ```
+
+10. Debugging
+
+    ```bash
+     followmail -f other@example.com -t other2@example.com -v
+     ```
+
+
 ## Open source
 
 _followmail_ is an open source project. Any contribute, It's welcome.

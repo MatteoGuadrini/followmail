@@ -154,6 +154,19 @@ def print_verbose(verbosity: bool, *messages: str):
     """
     if verbosity:
         print("debug:", *messages)
+        
+
+def report_issue(exc):
+    """Report issue
+    
+    :param: exc: Exception object
+    """
+    print(
+        "followmail: error: {0} on line {1}, with error {2}".format(
+            type(exc).__name__, exc.__traceback__.tb_lineno, str(exc)
+        )
+    )
+    exit(1)
 
 
 def open_log(log: str):
@@ -315,6 +328,9 @@ def main():
 # endregion
 
 if __name__ == "__main__":
-    main()
+    try:
+        main()
+    except Exception as err:
+        report_issue(err)
 
 # endregion

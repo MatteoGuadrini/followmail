@@ -123,6 +123,7 @@ def get_args():
     )
 
     args = parser.parse_args()
+    email_pattern = r"^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$"
 
     # Check if max lines is less than one
     if args.max_lines is not None and args.max_lines <= 0:
@@ -137,11 +138,11 @@ def get_args():
         parser.error('unspecified filter "--to" or "--from"')
 
     # Validate email address
-    if args.to and "@" not in args.to:
-        parser.error("specified a valid email address")
+    if args.to and not re.findall(email_pattern, args.to):
+        parser.error("specified a valid email address in 'to' field")
 
-    if args.from_ and "@" not in args.from_:
-        parser.error("specified a valid email address")
+    if args.from_ and not re.findall(email_pattern, args.from_):
+        parser.error("specified a valid email address in 'from' field")
 
     return args
 
@@ -232,7 +233,7 @@ def print_data(data: Dataset, csv: bool = False, json: bool = False):
     if not data:
         print("no data found")
         return
-    
+
     # ...everything else, print!
     if csv:
         print(data.export("csv"))

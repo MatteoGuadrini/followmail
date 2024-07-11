@@ -35,7 +35,7 @@ from tablib import Dataset
 # endregion
 
 # region globals
-__version__ = "0.0.1"
+__version__ = "1.0.0"
 LogLine = namedtuple(
     "LogLine", ["date", "time", "server", "queue", "smtpid", "message"]
 )
@@ -103,21 +103,21 @@ def get_args():
         type=int,
         help="max lines to print",
     )
-    parser.add_argument(
-        "--sortby-date",
+    parser.add_argument(     
         "-D",
+        "--sortby-date",
         help="sort lines by date",
         action="store_true",
     )
     parser.add_argument(
-        "--csv",
         "-c",
+        "--csv",
         help="print in csv format",
         action="store_true",
     )
     parser.add_argument(
-        "--json",
         "-j",
+        "--json",
         help="print in json format",
         action="store_true",
     )

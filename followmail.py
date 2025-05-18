@@ -103,7 +103,7 @@ def get_args():
         type=int,
         help="max lines to print",
     )
-    parser.add_argument(     
+    parser.add_argument(
         "-D",
         "--sortby-date",
         help="sort lines by date",
@@ -154,11 +154,11 @@ def print_verbose(verbosity: bool, *messages: str):
     """
     if verbosity:
         print("debug:", *messages)
-        
+
 
 def report_issue(exc):
     """Report issue
-    
+
     :param: exc: Exception object
     """
     print(
@@ -171,9 +171,9 @@ def report_issue(exc):
 
 def open_log(log: str):
     """Open maillog file
-    
+
     :param log: maillog file path
-    :return: opened log 
+    :return: opened log
     """
     # Define function to open log
     open_method = gzip.open if log.endswith("gz") else open
@@ -183,7 +183,7 @@ def open_log(log: str):
 
 def make_logline(line: str, pattern: re.Pattern):
     """Make LogLine object from string
-    
+
     :param line: maillog line
     :param pattern: regexp pattern object
     :return: LogLine
@@ -210,7 +210,7 @@ def make_logline(line: str, pattern: re.Pattern):
 
 def search_by_smtpid(smtpid: str, log: str, pattern: re.Pattern):
     """Search log lines by smtp id
-    
+
     :param smtpid: string of smtp is
     :param log: opened log file
     :param pattern: regexp pattern
@@ -286,18 +286,18 @@ def main():
     # Process log file
     with open_log(maillog) as maillog_file:
         for line in maillog_file:
-
             logline = make_logline(line, pattern)
 
             if logline:
-
                 # Filter queue
                 if queue not in logline.queue:
                     continue
 
                 # Filter to and from
-                if (f"to=<{to}>" not in logline.message and
-                        f"from=<{from_}>" not in logline.message):
+                if (
+                    f"to=<{to}>" not in logline.message
+                    and f"from=<{from_}>" not in logline.message
+                ):
                     continue
 
                 print_verbose(verbose, f"found a log line {logline}")
@@ -315,7 +315,7 @@ def main():
         data.sort("smtpid")
 
     if args.max_lines:
-        limited_data = data[:args.max_lines]
+        limited_data = data[: args.max_lines]
         # Create a new empty Dataset
         data = Dataset(headers=("date", "time", "server", "queue", "smtpid", "message"))
         # Extend dataset with limited data

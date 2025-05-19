@@ -66,6 +66,14 @@ def get_args():
         action="store_true",
     )
     parser.add_argument(
+        "--pattern-log",
+        "-p",
+        help="regular expression log line pattern",
+        action="store",
+        type=str,
+        default=r"(^[A-Za-z]{3}\s\s?\d{1,2})\s(\d{2}:\d{2}:\d{2})\s(\w+)\s(.*/.*\[\d+]):\s(\w{10,15}):\s(.*)",
+    )
+    parser.add_argument(
         "--to",
         "-t",
         help="email address into to field",
@@ -279,9 +287,7 @@ def main():
     print_verbose(verbose, f"add {queue} into filters")
 
     # Define pattern regexp
-    pattern = re.compile(
-        r"(^[A-Za-z]{3}\s\s?\d{1,2})\s(\d{2}:\d{2}:\d{2})\s(\w+)\s(.*/.*\[\d+]):\s(\w{10,15}):\s(.*)"
-    )
+    pattern = re.compile(args.pattern_log)
 
     # Process log file
     with open_log(maillog) as maillog_file:

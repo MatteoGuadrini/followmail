@@ -23,6 +23,7 @@
 """Main module of followmail program."""
 
 # region imports
+import traceback
 import argparse
 import gzip
 import os
@@ -129,6 +130,12 @@ def get_args():
         help="print in json format",
         action="store_true",
     )
+    parser.add_argument(
+        "-x",
+        "--explain-error",
+        help="Explain error with traceback",
+        action="store_true",
+    )
 
     args = parser.parse_args()
     email_pattern = r"^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$"
@@ -164,16 +171,19 @@ def print_verbose(verbosity: bool, *messages: str):
         print("debug:", *messages)
 
 
-def report_issue(exc):
+def report_issue(exc, tb=False):
     """Report issue
 
     :param: exc: Exception object
+    :param: tb: print traceback
     """
     print(
         "followmail: error: {0} on line {1}, with error {2}".format(
             type(exc).__name__, exc.__traceback__.tb_lineno, str(exc)
         )
     )
+    if tb:
+        traceback.print_exc()
     exit(1)
 
 
@@ -269,7 +279,6 @@ def main():
     """Main function"""
 
     # Define global for a script
-    args = get_args()
     verbose = args.verbose
     # Empty Dataset
     data = Dataset(headers=("date", "time", "server", "queue", "smtpid", "message"))
@@ -334,9 +343,10 @@ def main():
 # endregion
 
 if __name__ == "__main__":
+    args = get_args()
     try:
         main()
     except Exception as err:
-        report_issue(err)
+        report_issue(err, args.explain_error)
 
 # endregion

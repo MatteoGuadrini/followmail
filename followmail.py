@@ -112,10 +112,17 @@ def get_args():
         type=int,
         help="max lines to print",
     )
-    parser.add_argument(
+    group_sort = parser._mutually_exclusive_groups()
+    group_sort.add_argument(
         "-D",
         "--sortby-date",
         help="sort lines by date",
+        action="store_true",
+    )
+    group_sort.add_argument(
+        "-Q",
+        "--sortby-queue",
+        help="sort lines by queue",
         action="store_true",
     )
     parser.add_argument(
@@ -323,9 +330,11 @@ def main():
                 # Add logline into Dataset
                 data.extend(lines)
 
-    # Sort by smtpid
+    # Sort by field
     if args.sortby_date:
         data.sort("date")
+    elif args.sortby_queue:
+        data.sort("queue")
     else:
         data.sort("smtpid")
 

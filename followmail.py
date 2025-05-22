@@ -125,6 +125,12 @@ def get_args():
         help="sort lines by queue",
         action="store_true",
     )
+    group_sort.add_argument(
+        "-S",
+        "--sortby-server",
+        help="sort lines by server",
+        action="store_true",
+    )
     parser.add_argument(
         "-c",
         "--csv",
@@ -335,6 +341,8 @@ def main():
         data.sort("date")
     elif args.sortby_queue:
         data.sort("queue")
+    elif args.sortby_server:
+        data.sort("server")
     else:
         data.sort("smtpid")
 

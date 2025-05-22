@@ -112,7 +112,7 @@ def get_args():
         type=int,
         help="max lines to print",
     )
-    group_sort = parser._mutually_exclusive_groups()
+    group_sort = parser.add_mutually_exclusive_group()
     group_sort.add_argument(
         "-D",
         "--sortby-date",

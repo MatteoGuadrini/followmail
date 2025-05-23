@@ -1,5 +1,11 @@
 # Release notes
 
+## 1.1.0
+May 23, 2025
+
+- Add `sortby-queue` cli argument
+- Add `sortby-server` cli argument
+
 ## 1.0.0
 Jul 11, 2024
 

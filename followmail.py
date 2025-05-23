@@ -36,7 +36,7 @@ from tablib import Dataset
 # endregion
 
 # region globals
-__version__ = "1.0.0"
+__version__ = "1.1.0"
 LogLine = namedtuple(
     "LogLine", ["date", "time", "server", "queue", "smtpid", "message"]
 )

@@ -20,17 +20,19 @@ pip install .
 
 `followmail` have many command line arguments. They are explained in this table:
 
-| short | long          | description                       | args          |
-|-------|---------------|-----------------------------------|---------------|
-| -v    | --verbose     | Print with verbosity              |               |
-| -t    | --to          | Email address into **to** field   | Mail address  |
-| -f    | --from        | Email address into **from** field | Mail address  |
-| -l    | --maillog     | Input maillog file                | File path     |
-| -q    | --queue       | Name of postfix queue             | Name of queue |
-| -m    | --max-lines   | Max lines to print                | Number        |
-| -D    | --sortby-date | Sort lines by date                |               |
-| -c    | --csv         | Print in csv format               |               |
-| -j    | --json        | Print in json format              |               |
+| short | long           | description                       | args          |
+|-------|----------------|-----------------------------------|---------------|
+| -v    | --verbose      | Print with verbosity              |               |
+| -t    | --to           | Email address into **to** field   | Mail address  |
+| -f    | --from         | Email address into **from** field | Mail address  |
+| -l    | --maillog      | Input maillog file                | File path     |
+| -q    | --queue        | Name of postfix queue             | Name of queue |
+| -m    | --max-lines    | Max lines to print                | Number        |
+| -D    | --sortby-date  | Sort lines by date                |               |
+| -Q    | --sortby-queue | Sort lines by queue               |               |
+| -D    | --sortby-server| Sort lines by server              |               |
+| -c    | --csv          | Print in csv format               |               |
+| -j    | --json         | Print in json format              |               |
 
 ## Examples
 
@@ -64,16 +66,18 @@ pip install .
     followmail -f other@example.com -t other2@example.com -l "/var/log/maillog-20240709.tar.gz"
     ```
    
-6. Select archived log
+6. Select max 20 max lines
 
    ```bash
     followmail -f other@example.com -t other2@example.com -m 20
     ```
 
-7. Sort results by date
+7. Sort results by date, queue or server
 
    ```bash
     followmail -f other@example.com -t other2@example.com -D
+    followmail -f other@example.com -t other2@example.com -Q
+    followmail -f other@example.com -t other2@example.com -S
     ```
 
 8. Print result in CSV format

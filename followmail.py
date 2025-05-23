@@ -23,6 +23,7 @@
 """Main module of followmail program."""
 
 # region imports
+import traceback
 import argparse
 import gzip
 import os
@@ -35,7 +36,7 @@ from tablib import Dataset
 # endregion
 
 # region globals
-__version__ = "1.0.0"
+__version__ = "1.1.0"
 LogLine = namedtuple(
     "LogLine", ["date", "time", "server", "queue", "smtpid", "message"]
 )
@@ -64,6 +65,14 @@ def get_args():
         "-v",
         help="print with verbosity",
         action="store_true",
+    )
+    parser.add_argument(
+        "--pattern-log",
+        "-p",
+        help="regular expression log line pattern",
+        action="store",
+        type=str,
+        default=r"(^[A-Za-z]{3}\s\s?\d{1,2})\s(\d{2}:\d{2}:\d{2})\s(\w+)\s(.*/.*\[\d+]):\s(\w{10,15}):\s(.*)",
     )
     parser.add_argument(
         "--to",
@@ -103,10 +112,23 @@ def get_args():
         type=int,
         help="max lines to print",
     )
-    parser.add_argument(     
+    group_sort = parser.add_mutually_exclusive_group()
+    group_sort.add_argument(
         "-D",
         "--sortby-date",
         help="sort lines by date",
+        action="store_true",
+    )
+    group_sort.add_argument(
+        "-Q",
+        "--sortby-queue",
+        help="sort lines by queue",
+        action="store_true",
+    )
+    group_sort.add_argument(
+        "-S",
+        "--sortby-server",
+        help="sort lines by server",
         action="store_true",
     )
     parser.add_argument(
@@ -119,6 +141,12 @@ def get_args():
         "-j",
         "--json",
         help="print in json format",
+        action="store_true",
+    )
+    parser.add_argument(
+        "-x",
+        "--explain-error",
+        help="Explain error with traceback",
         action="store_true",
     )
 
@@ -154,26 +182,29 @@ def print_verbose(verbosity: bool, *messages: str):
     """
     if verbosity:
         print("debug:", *messages)
-        
 
-def report_issue(exc):
+
+def report_issue(exc, tb=False):
     """Report issue
-    
+
     :param: exc: Exception object
+    :param: tb: print traceback
     """
     print(
         "followmail: error: {0} on line {1}, with error {2}".format(
             type(exc).__name__, exc.__traceback__.tb_lineno, str(exc)
         )
     )
+    if tb:
+        traceback.print_exc()
     exit(1)
 
 
 def open_log(log: str):
     """Open maillog file
-    
+
     :param log: maillog file path
-    :return: opened log 
+    :return: opened log
     """
     # Define function to open log
     open_method = gzip.open if log.endswith("gz") else open
@@ -183,7 +214,7 @@ def open_log(log: str):
 
 def make_logline(line: str, pattern: re.Pattern):
     """Make LogLine object from string
-    
+
     :param line: maillog line
     :param pattern: regexp pattern object
     :return: LogLine
@@ -210,7 +241,7 @@ def make_logline(line: str, pattern: re.Pattern):
 
 def search_by_smtpid(smtpid: str, log: str, pattern: re.Pattern):
     """Search log lines by smtp id
-    
+
     :param smtpid: string of smtp is
     :param log: opened log file
     :param pattern: regexp pattern
@@ -261,7 +292,6 @@ def main():
     """Main function"""
 
     # Define global for a script
-    args = get_args()
     verbose = args.verbose
     # Empty Dataset
     data = Dataset(headers=("date", "time", "server", "queue", "smtpid", "message"))
@@ -279,25 +309,23 @@ def main():
     print_verbose(verbose, f"add {queue} into filters")
 
     # Define pattern regexp
-    pattern = re.compile(
-        r"(^[A-Za-z]{3}\s\s?\d{1,2})\s(\d{2}:\d{2}:\d{2})\s(\w+)\s(.*/.*\[\d+]):\s(\w{10,15}):\s(.*)"
-    )
+    pattern = re.compile(args.pattern_log)
 
     # Process log file
     with open_log(maillog) as maillog_file:
         for line in maillog_file:
-
             logline = make_logline(line, pattern)
 
             if logline:
-
                 # Filter queue
                 if queue not in logline.queue:
                     continue
 
                 # Filter to and from
-                if (f"to=<{to}>" not in logline.message and
-                        f"from=<{from_}>" not in logline.message):
+                if (
+                    f"to=<{to}>" not in logline.message
+                    and f"from=<{from_}>" not in logline.message
+                ):
                     continue
 
                 print_verbose(verbose, f"found a log line {logline}")
@@ -308,14 +336,18 @@ def main():
                 # Add logline into Dataset
                 data.extend(lines)
 
-    # Sort by smtpid
+    # Sort by field
     if args.sortby_date:
         data.sort("date")
+    elif args.sortby_queue:
+        data.sort("queue")
+    elif args.sortby_server:
+        data.sort("server")
     else:
         data.sort("smtpid")
 
     if args.max_lines:
-        limited_data = data[:args.max_lines]
+        limited_data = data[: args.max_lines]
         # Create a new empty Dataset
         data = Dataset(headers=("date", "time", "server", "queue", "smtpid", "message"))
         # Extend dataset with limited data
@@ -328,9 +360,10 @@ def main():
 # endregion
 
 if __name__ == "__main__":
+    args = get_args()
     try:
         main()
     except Exception as err:
-        report_issue(err)
+        report_issue(err, args.explain_error)
 
 # endregion
